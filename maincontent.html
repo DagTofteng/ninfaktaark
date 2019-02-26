@@ -1,0 +1,462 @@
+﻿<div class="row justify-content-center">
+    <div class="col-10 col-print-12">
+        <div class="row mt-3">
+            <div class="col-10">
+                <h2 class="ml-1" data-bind="text: lokalitetNavn() + '(' + ninID() + ')'"></h2>
+            </div>
+            <div class="col-2 text-right d-print-none">
+                <button type="button" class="btn btn-lowpri" data-bind="click: togglePrintPopup">
+                    <i class="fas fa-print"></i> Skriv ut
+                </button>
+                <div class="printPopup container text-left" data-bind="visible: printPopupVisible">
+                    <div class="card-header row">                        
+                        <h5 class="col-10 pl-0 mb-0">Utskriftsvalg</h5>
+                        <div class="col-2 pr-0 text-right">
+                            <a href="javascript(void:0)" data-bind="click: togglePrintPopup">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <label class="strong mb-2">Inkludér:</label>
+                        <div class="form-check">
+                            <input type="checkbox" value="tilstand" name="printIncludeList" id="printTilstand" data-bind="checked: printTilstand" />
+                            <label class="form-check-label" for="printTilstand">Tilstand</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" value="naturmangfold" name="printIncludeList" id="printNaturmangfold" data-bind="checked: printNaturmangfold" />
+                            <label class="form-check-label" for="printNaturmangfold">Naturmangfold</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" value="bilder" name="printIncludeList" id="printBilder" data-bind="checked: printBilder" />
+                            <label class="form-check-label" for="printBilder">Bilder</label>
+                        </div>
+                        <button type="button" class="btn btn-primary btn-block mt-3" data-bind="click: printPage">
+                            <i class="fas fa-print"></i> Skriv ut
+                        </button>
+                        <span data-bind="text: printIncludeList"></span>
+                    </div>
+                                     
+                </div>
+            </div>
+        </div>
+        <div class="row mt-1">
+            <div class="col">
+                <div class="card">
+                    <h5 class="card-header">
+                        Lokalitetbeskrivelse
+                    </h5>
+                    <div class="card-body row">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">NIN Id</div>
+                                <div class="col" data-bind="text:ninID"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">LokalitetNavn</div>
+                                <div class="col" data-bind="text:lokalitetNavn"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Naturtype</div>
+                                <div class="col" data-bind="text:naturType"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Utvalgskriterium</div>
+                                <div class="col" data-bind="text:utvalgsKriterium"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Lokalitetskvalitet</div>
+                                <div class="col" data-bind="text:lokalitetKvalitetTekst"></div>
+                            </div>
+
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Kommune</div>
+                                <div class="col" data-bind="text:kommune"></div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="w-400px pl-4 paddingRight15px col-print-12" data-bind="css: printBilder() ? '' : 'd-print-none'">
+                <div class="card" id="thumbnailGalleryTop">
+                    <h5 class="card-header">
+                        Bilder
+                    </h5>
+                    <div class="card-body text-center d-print-none" id="thumbnailGallery">
+                        <div data-bind="foreach: photoListTop3">
+                            <img data-bind="attr: { 'src': url }" class="thumbnail">
+                        </div>
+                        <a href="javascript:void(0)" data-bind="text: thumbnailText"></a>
+                    </div>
+                    <div class="card-body d-print-block d-none" id="thumbnailGalleryPrint">
+                        <div data-bind="foreach: photoList">
+                            <img data-bind="attr: { 'src': url }" class="thumbnail">
+                        </div>
+                        <a href="javascript:void(0)" data-bind="text: thumbnailText" class="d-print-none"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3" id="tilstand" data-bind="css: printTilstand() ? '' : 'd-print-none'">
+            <div class="col-12">
+                <div class="card">
+                    <h5 class="card-header">
+                        Tilstand
+                    </h5>
+                    <div class="card-body row">
+
+                        <div class="col-12">
+
+                            <div class="row ">
+                                <div class="w-200px paddingLeft15">
+                                    <a href="javascript:void(0)" class="readmore" data-bind="click: toggleTilstandBeskrivelse">
+                                        Tilstand
+                                        <i class="fas" data-bind="css: tilstandBeskrivelseVisible() ? 'fa-caret-up' : 'fa-caret-down'"></i>
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    <span data-bind="text:tilstandTekst"></span>
+                                    <a href="javascript:void(0)" class="readmore" data-bind="click: toggleTilstandBeskrivelse">
+                                        <span data-bind="text:tilstandBeskrivelseVisible() ? '(les mindre...)' : '(les mer...)'"></span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row" data-bind="visible: tilstandBeskrivelseVisible">
+                                <div class="w-200px paddingLeft15">Tilstandsbeskrivelse</div>
+                                <div class="col" data-bind="text:tilstandBeskrivelse"></div>
+                            </div>
+
+                            <div class="mt-3" data-bind="visible: tilstandBeskrivelseVisible">
+                                <table class="table table-striped table-hover table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Type variabel</th>
+                                            <th>Variabelgruppe</th>
+                                            <th>Variabeltema</th>
+                                            <th>Variabelnavn</th>
+                                            <th>Trinn</th>
+                                            <th>Kode</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody data-bind="foreach: beskrivelsesVariabelList">
+                                        <tr>
+                                            <td data-bind="text: TypeVariabel"></td>
+                                            <td data-bind="text: Variabelgruppe"></td>
+                                            <td data-bind="text: Variabeltema"></td>
+                                            <td data-bind="text: Variabelnavn"></td>
+                                            <td data-bind="text: Trinnkode != Trinnavn ? Trinnavn + ' (' + Trinnkode + ')' : Trinnavn"></td>
+                                            <td>
+                                                <a data-bind="attr: { href: UrlArtsdatabanken }, text: Variabelkode" target="_blank">
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3" id="naturmangfold" data-bind="css: printNaturmangfold() ? '' : 'd-print-none'">
+            <div class="col-12">
+                <div class="card">
+                    <h5 class="card-header">
+                        Naturmangfold
+                    </h5>
+                    <div class="card-body row">
+
+                        <div class="col-12">
+
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">
+                                    <a href="javascript:void(0)" class="readmore" data-bind="click: toggleNaturMangfoldBeskrivelse">
+                                        Naturmangfold
+                                        <i class="fas" data-bind="css: naturMangfoldBeskrivelseVisible() ? 'fa-caret-up' : 'fa-caret-down'"></i>
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    <span data-bind="text:naturMangfoldTekst"></span>
+                                    <a href="javascript:void(0)" class="readmore" data-bind="click: toggleNaturMangfoldBeskrivelse">
+                                        <span data-bind="text:naturMangfoldBeskrivelseVisible() ? '(les mindre...)' : '(les mer...)'"></span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row" data-bind="visible: naturMangfoldBeskrivelseVisible">
+                                <div class="w-200px paddingLeft15">Naturmangfoldbeskrivelse</div>
+                                <div class="col" data-bind="text:naturMangfoldBeskrivelse"></div>
+                            </div>
+
+                            <div class="mt-3" data-bind="visible: naturMangfoldBeskrivelseVisible">
+                                <table class="table table-striped table-hover table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Type variabel</th>
+                                            <th>Variabelgruppe</th>
+                                            <th>Variabeltema</th>
+                                            <th>Variabelnavn</th>
+                                            <th>Trinn</th>
+                                            <th>Kode</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody data-bind="foreach: naturMangfoldList">
+                                        <tr>
+                                            <td data-bind="text: TypeVariabel"></td>
+                                            <td data-bind="text: Variabelgruppe"></td>
+                                            <td data-bind="text: Variabeltema"></td>
+                                            <td data-bind="text: Variabelnavn"></td>
+                                            <td data-bind="text: Trinnavn"></td>
+                                            <td>
+                                                <a data-bind="attr: { href: UrlArtsdatabanken }, text: Variabelkode" target="_blank">
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-lg-6 col-md-12">
+                <div class="card">
+                    <h5 class="card-header">
+                        Lokalitetdata
+                    </h5>
+                    <div class="card-body row">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Areal</div>
+                                <div class="col" data-bind="text:areal"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Hovedøkosystem</div>
+                                <div class="col" data-bind="text:hovedOkosystem"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Mosaikk</div>
+                                <div class="col" data-bind="text:mosaikkTekst"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Nøyaktighet</div>
+                                <div class="col" data-bind="text:noyaktighetTekst"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Usikkerhet</div>
+                                <div class="col" data-bind="text:usikkerhetTekst"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Usikkerhetsbeskrivelse</div>
+                                <div class="col" data-bind="text:usikkerhetBeskrivelse"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Kartleggingsdato</div>
+                                <div class="col" data-bind="text:kartleggingsDato"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Kartleggingsår</div>
+                                <div class="col" data-bind="text:kartleggingsAar"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Oppdragsgiver</div>
+                                <div class="col" data-bind="text:oppdragsgiverTekst"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">KartleggerFirma</div>
+                                <div class="col" data-bind="text:kartleggerFirma"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Kartlegger</div>
+                                <div class="col" data-bind="text:kartlegger"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Naturtypekode</div>
+                                <div class="col" data-bind="text:naturTypeKode"></div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-12">
+                <div class="card">
+                    <h5 class="card-header">
+                        Lokalitetdata
+                    </h5>
+                    <div class="card-body row">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">
+                                    <a href="javascript:void(0)" class="readmore" data-bind="click: toggleNaturTypeBeskrivelse">
+                                        Beskrivelse av naturtypen
+                                        <i class="fas" data-bind="css: naturTypeBeskrivelseVisible() ? 'fa-caret-up' : 'fa-caret-down'"></i>
+                                    </a>
+
+                                </div>
+                                <div class="col">
+                                    <span data-bind="text:naturTypeBeskrivelseVisible() ? naturTypeBeskrivelseLang : naturTypeBeskrivelseKort"></span>
+                                    <a href="javascript:void(0)" class="readmore" data-bind="click: toggleNaturTypeBeskrivelse">
+                                        <span data-bind="text:naturTypeBeskrivelseVisible() ? '(les mindre...)' : '(les mer...)'"></span>
+                                    </a>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="card">
+                    <h5 class="card-header">
+                        Lokalitetdata
+                    </h5>
+                    <div class="card-body">
+                        <table class="table table-striped table-hover table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Hovedtypegruppe</th>
+                                    <th>Hovedtype</th>
+                                    <th>Kartleggingsenhet</th>
+                                    <th>NiN kode</th>
+                                    <th>Andel</th>
+                                </tr>
+                            </thead>
+                            <tbody data-bind="foreach: kartleggingsEnheterList">
+                                <tr>
+                                    <td data-bind="text: Hovedtypegruppe"></td>
+                                    <td data-bind="text: Hovedtype"></td>
+                                    <td data-bind="text: Kartleggingsenhet"></td>
+                                    <td data-bind="text: NiN_kode"></td>
+                                    <td data-bind="text: Andel"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3 pageBreakOnPrint">
+            <div class="col-lg-6 col-md-12 col-print-12">
+                <div class="card">
+                    <h5 class="card-header">
+                        Dekningskart (prosjektområde)
+                    </h5>
+                    <div class="card-body row">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Årstall</div>
+                                <div class="col" data-bind="text:dekningAarstall"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Kartleggerfirma</div>
+                                <div class="col" data-bind="text:dekningKartleggerFirma"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Kartleggingsinstruks</div>
+                                <div class="col">
+                                    <a data-bind="attr: { href:dekningKartleggingsInstruks }, text:dekningKartleggingsInstruks" target="_blank"></a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Oppdragsgiver</div>
+                                <div class="col" data-bind="text:dekningOppdragsgiver"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Program</div>
+                                <div class="col" data-bind="text:dekningProgram"></div>
+                            </div><div class="row">
+                                <div class="w-200px paddingLeft15">Programkode</div>
+                                <div class="col" data-bind="text:dekningProgramKode"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Prosjektområdenavn</div>
+                                <div class="col" data-bind="text:dekningProsjektomradenavn"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Prosjektnavn</div>
+                                <div class="col" data-bind="text:dekningProsjektnavn"></div>
+                            </div>
+                            <div class="row">
+                                <div class="w-200px paddingLeft15">Areal</div>
+                                <div class="col" data-bind="text:dekningAreal"></div>
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </div> 
+            <div class="col-lg-6 col-md-12 col-print-12" id="mapCardContainer">
+                <div class="card">
+                    <h5 class="card-header">
+                        Kart
+                    </h5>
+                    <div >
+                        <div id="mapViewDiv">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalGallery" tabindex="-1" role="dialog" aria-labelledby="modalGalleryTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Bildegalleri <span data-bind="text: lokalitetNavn() + '(' + ninID() + ')'"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-0">
+                <div id="demo" class="carousel slide" data-ride="carousel">
+
+                    <!-- Indicators -->
+                    <ul class="carousel-indicators" data-bind="foreach: photoList" >
+                        <li data-target="#demo" data-bind="css: { 'active' : $index() == 0 }, attr: { 'data-slide-to': $index }"></li>
+                    </ul>
+
+                    <!-- The slideshow -->
+                    <div class="carousel-inner" data-bind="foreach: photoList">
+                        <div class="carousel-item" data-bind="css: { 'active' : $index() == 0 }">
+                            <img data-bind="attr: { 'src': url }">
+                        </div>                        
+                    </div>
+
+                    <!-- Left and right controls -->
+                    <a class="carousel-control-prev" href="#demo" data-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </a>
+                    <a class="carousel-control-next" href="#demo" data-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </a>
+
+                </div>
+            </div>            
+        </div>
+    </div>
+</div>

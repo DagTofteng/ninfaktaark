@@ -1,10 +1,9 @@
 ﻿<html xmlns="https://www.w3.org/1999/xhtml" class="dj_webkit dj_chrome dj_contentbox">
 <head>
-    <title>NiN-Prosjektinnmelding</title>
-    <!--<link rel="shortcut icon" href="branding/images/favicon.ico">-->
+    <title>NiN-Prosjektinnmelding</title>    
     <link rel="shortcut icon" href="https://www.miljodirektoratet.no/Framework/favicon.ico" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,300" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:100,200,300,400,500,700,900" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,300" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Roboto:100,200,300,400,500,700,900" rel="stylesheet" type="text/css">
 
     <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
@@ -23,12 +22,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/i18n/nb.js"></script>
 
+
+
+    
+
 </head>
 <body>
     <script src="js/dojoconfig.js"></script>
     <script src="https://js.arcgis.com/4.10/"></script>
     <script>
-        require(["js/app"]); //Må legge tilbake auth etterhvert
+        require(["js/app"]); 
     </script>
     <appheader>
         <nav class="navbar navbar-default navbar-fixed-top" id="headerContainer">
@@ -44,6 +47,7 @@
 
         </nav>
     </appheader>
+    
     <div class="mainContainer">
         <div class="spinnerWrap" id="startupSpinner" style="display: none;">
             <div class="spinnerMiddle">
@@ -55,7 +59,9 @@
                 </div>
             </div>
         </div>
-        <maincontent></maincontent>
+            <maincontent></maincontent>
+        
+
     </div>
 
 
