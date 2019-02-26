@@ -1,0 +1,87 @@
+﻿@page {
+    margin-top: 0.5in;
+    margin-bottom: 0.5in;
+    margin-left: 0.5in;
+    margin-right: 0.5in;
+}
+
+body, html, table, .btn {
+    font-size: 12px !important;
+}
+
+html, body {
+    overflow-x: hidden;
+    height: inherit;
+    position: relative;
+    color: black
+}
+
+html {
+    overflow-y: auto;
+}
+.mainContainer {
+    background: white;
+    height: auto;
+}
+
+.btn {
+    padding: 0;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.table > thead th {
+    background-color: #f7f7f7 !important;
+}
+
+.table > tbody > tr > td {
+    border: 1px solid #efefef;
+    padding: 3px;
+}
+
+
+.pageBreakOnPrint {
+    /*page-break-before: always !important;*/
+    page-break-after: always!important;
+    page-break-inside: avoid!important;
+}
+}
+
+thead {
+    break-inside: initial;
+}
+
+#thumbnailGalleryTop {
+    height: auto;
+}
+
+.col-print-12 {
+    flex: 100%;
+    max-width: 100%;
+}
+.col-print-6 {
+    flex: 50%;
+    max-width: 50%;
+}
+
+.thumbnail {    
+    width: 300px;
+    height: auto;
+    margin: 5px;
+        
+}
+
+#thumbnailGallery {
+    text-align: left!important;
+}
+
+.card {
+    margin-top: 15px;
+}
+.readmore {
+    display: none;
+}
+#mapViewDiv, #mapViewDiv .esri-view-surface {    
+    height: 400px !important;
+}
