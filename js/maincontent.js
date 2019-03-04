@@ -400,17 +400,19 @@
             };
 
             self.printPage = function () {
-                self.takeScreenShot();
-                self.takeScreenShot();
-                self.takeScreenShot();
-                
                 self.naturMangfoldBeskrivelseVisible(true);
                 self.naturTypeBeskrivelseVisible(true);
                 self.tilstandBeskrivelseVisible(true);
-                window.print();
-                self.naturMangfoldBeskrivelseVisible(false);
-                self.naturTypeBeskrivelseVisible(false);
-                self.tilstandBeskrivelseVisible(false);                
+                self.takeScreenShot();
+                self.takeScreenShot();
+
+                //takeScreenshot må ha litt tid på å skrive til img-taggen
+                setTimeout(function () {
+                    window.print();
+                    self.naturMangfoldBeskrivelseVisible(false);
+                    self.naturTypeBeskrivelseVisible(false);
+                    self.tilstandBeskrivelseVisible(false);
+                }, 1000);
             };
 
             self.takeScreenShot = function () {
