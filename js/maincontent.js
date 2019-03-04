@@ -104,9 +104,9 @@
             self.printPopupVisible = ko.observable(false);
             self.printIncludeList = ko.observableArray();
 
-            self.printBilder = ko.observable(false);
-            self.printNaturmangfold = ko.observable(false);
-            self.printTilstand = ko.observable(false);
+            self.printBilder = ko.observable(true);
+            self.printNaturmangfold = ko.observable(true);
+            self.printTilstand = ko.observable(true);
             self.printAvailable = ko.observable(false);
 
             //Functions section-------------------------------------------------------------------------
@@ -231,8 +231,25 @@
                                 tempArr = resKE[this].features.map(function (k) {
                                     return k.attributes;
                                 });
+                                var keArr = [];
+                                var urlArtsdb = "https://artsdatabanken.no/nin2.0/";
+                                array.forEach(tempArr, function (item) {
+                                    if (item.NiN_kode) {
+                                        var kodeSplit = item.NiN_kode.split("NA_");
+                                        var kode = item.NiN_kode;
+                                        if (kodeSplit.length > 1) {
+                                            kode = kodeSplit[1];
+                                        }
+                                        item.UrlNiN_kode = urlArtsdb + kode;                                        
+                                    }
+                                    else {
+                                        item.UrlNin_kode = null;
+                                    }
+                                    keArr.push(item);
+                                });
+                                
 
-                                self.kartleggingsEnheterList(tempArr);
+                                self.kartleggingsEnheterList(keArr);
                             }
                         }));
 
