@@ -210,12 +210,16 @@ h1, h2, h3, h4, h5, h6, h7 {
 a, a:focus, a:hover, a:visited, a:active {
     color: #004B46;
     font-size: 14px;
-    text-decoration: none;
+    text-decoration: underline;
 }
 
-    a:hover {
-        text-decoration: underline;
-    }
+a:hover {
+    text-decoration: underline;
+}
+
+a.nostyle {
+    text-decoration: none !important;
+}
 
 #copyRight {
     position: absolute;
@@ -329,15 +333,16 @@ th.sorted {
 .dropdown-menu > .active > a, .dropdown-menu > .active > a:focus, .dropdown-menu > .active > a:hover {
     background-color: #006469;
 }
+.w-120px {
+    width: 120px;
+}
 .w-200px {
     width: 200px;
 }
 .w-400px {
     width: 400px;
 }
-#thumbnailGalleryTop {
-    height: 213px;
-}
+
 
 .paddingRight15px {
     padding-right: 15px;
@@ -472,6 +477,12 @@ th.sorted {
     top: 44px;
 }
 
+.printPopup .form-check-label, .printPopup input[type=checkbox] {
+        cursor: pointer;
+}
+#thumbnailGalleryTop {
+    height: 213px;
+}
 
 .thumbnail {
     cursor: pointer;
