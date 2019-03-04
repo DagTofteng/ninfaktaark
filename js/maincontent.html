@@ -5,11 +5,11 @@
                 <h2 class="ml-1" data-bind="text: lokalitetNavn() + '(' + ninID() + ')'"></h2>
             </div>
             <div class="col-2 text-right d-print-none">
-                <button type="button" class="btn btn-lowpri" data-bind="click: togglePrintPopup">
+                <button type="button" class="btn btn-lowpri" data-bind="click: togglePrintPopup, enable: printAvailable">
                     <i class="fas fa-print"></i> Skriv ut
                 </button>
                 <div class="printPopup container text-left" data-bind="visible: printPopupVisible">
-                    <div class="card-header row">                        
+                    <div class="card-header row">
                         <h5 class="col-10 pl-0 mb-0">Utskriftsvalg</h5>
                         <div class="col-2 pr-0 text-right">
                             <a href="javascript(void:0)" data-bind="click: togglePrintPopup">
@@ -36,10 +36,11 @@
                         </button>
                         <span data-bind="text: printIncludeList"></span>
                     </div>
-                                     
+
                 </div>
             </div>
         </div>
+        
         <div class="row mt-1">
             <div class="col">
                 <div class="card">
@@ -112,15 +113,15 @@
 
                             <div class="row ">
                                 <div class="w-200px paddingLeft15">
-                                    <a href="javascript:void(0)" class="readmore" data-bind="click: toggleTilstandBeskrivelse">
+                                    <a href="javascript:void(0)" class="nostyle" data-bind="click: toggleTilstandBeskrivelse">
                                         Tilstand
-                                        <i class="fas" data-bind="css: tilstandBeskrivelseVisible() ? 'fa-caret-up' : 'fa-caret-down'"></i>
+                                        <i class="fas d-print-none" data-bind="css: tilstandBeskrivelseVisible() ? 'fa-caret-up' : 'fa-caret-down'"></i>
                                     </a>
                                 </div>
                                 <div class="col">
                                     <span data-bind="text:tilstandTekst"></span>
-                                    <a href="javascript:void(0)" class="readmore" data-bind="click: toggleTilstandBeskrivelse">
-                                        <span data-bind="text:tilstandBeskrivelseVisible() ? '(les mindre...)' : '(les mer...)'"></span>
+                                    <a href="javascript:void(0)"  data-bind="click: toggleTilstandBeskrivelse">
+                                        <span class="d-print-none" data-bind="text:tilstandBeskrivelseVisible() ? '(les mindre...)' : '(les mer...)'"></span>
                                     </a>
                                 </div>
                             </div>
@@ -148,7 +149,7 @@
                                             <td data-bind="text: Variabeltema"></td>
                                             <td data-bind="text: Variabelnavn"></td>
                                             <td data-bind="text: Trinnkode != Trinnavn ? Trinnavn + ' (' + Trinnkode + ')' : Trinnavn"></td>
-                                            <td>
+                                            <td class="w-120px">
                                                 <a data-bind="attr: { href: UrlArtsdatabanken }, text: Variabelkode" target="_blank">
                                                 </a>
                                             </td>
@@ -175,15 +176,15 @@
 
                             <div class="row">
                                 <div class="w-200px paddingLeft15">
-                                    <a href="javascript:void(0)" class="readmore" data-bind="click: toggleNaturMangfoldBeskrivelse">
+                                    <a href="javascript:void(0)" class="nostyle" data-bind="click: toggleNaturMangfoldBeskrivelse">
                                         Naturmangfold
-                                        <i class="fas" data-bind="css: naturMangfoldBeskrivelseVisible() ? 'fa-caret-up' : 'fa-caret-down'"></i>
+                                        <i class="fas d-print-none" data-bind="css: naturMangfoldBeskrivelseVisible() ? 'fa-caret-up' : 'fa-caret-down'"></i>
                                     </a>
                                 </div>
                                 <div class="col">
                                     <span data-bind="text:naturMangfoldTekst"></span>
-                                    <a href="javascript:void(0)" class="readmore" data-bind="click: toggleNaturMangfoldBeskrivelse">
-                                        <span data-bind="text:naturMangfoldBeskrivelseVisible() ? '(les mindre...)' : '(les mer...)'"></span>
+                                    <a href="javascript:void(0)" data-bind="click: toggleNaturMangfoldBeskrivelse">
+                                        <span class="d-print-none" data-bind="text:naturMangfoldBeskrivelseVisible() ? '(les mindre...)' : '(les mer...)'"></span>
                                     </a>
                                 </div>
                             </div>
@@ -201,7 +202,7 @@
                                             <th>Variabeltema</th>
                                             <th>Variabelnavn</th>
                                             <th>Trinn</th>
-                                            <th>Kode</th>
+                                            <th class="w-120px">Kode</th>
                                         </tr>
                                     </thead>
                                     <tbody data-bind="foreach: naturMangfoldList">
@@ -296,16 +297,16 @@
                         <div class="col-12">
                             <div class="row">
                                 <div class="w-200px paddingLeft15">
-                                    <a href="javascript:void(0)" class="readmore" data-bind="click: toggleNaturTypeBeskrivelse">
+                                    <a href="javascript:void(0)" class="nostyle" data-bind="click: toggleNaturTypeBeskrivelse">
                                         Beskrivelse av naturtypen
-                                        <i class="fas" data-bind="css: naturTypeBeskrivelseVisible() ? 'fa-caret-up' : 'fa-caret-down'"></i>
+                                        <i class="fas d-print-none" data-bind="css: naturTypeBeskrivelseVisible() ? 'fa-caret-up' : 'fa-caret-down'"></i>
                                     </a>
 
                                 </div>
                                 <div class="col">
                                     <span data-bind="text:naturTypeBeskrivelseVisible() ? naturTypeBeskrivelseLang : naturTypeBeskrivelseKort"></span>
-                                    <a href="javascript:void(0)" class="readmore" data-bind="click: toggleNaturTypeBeskrivelse">
-                                        <span data-bind="text:naturTypeBeskrivelseVisible() ? '(les mindre...)' : '(les mer...)'"></span>
+                                    <a href="javascript:void(0)" data-bind="click: toggleNaturTypeBeskrivelse">
+                                        <span class="d-print-none" data-bind="text:naturTypeBeskrivelseVisible() ? '(les mindre...)' : '(les mer...)'"></span>
                                     </a>
 
                                 </div>
@@ -402,16 +403,27 @@
 
                     </div>
                 </div>
-            </div> 
-            <div class="col-lg-6 col-md-12 col-print-12" id="mapCardContainer">
+            </div>
+            <div class="col-6 d-print-none" id="mapCardContainer">
                 <div class="card">
                     <h5 class="card-header">
                         Kart
                     </h5>
-                    <div >
+                    <div>
                         <div id="mapViewDiv">
 
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 mt-3 d-print-block d-none" id="mapCardPrintContainer">
+                <div class="card">
+                    <h5 class="card-header">
+                        Kart
+                    </h5>
+                    <div>
+                        <img id="mapSceenshot" style="width:100%;"/>
                     </div>
                 </div>
             </div>

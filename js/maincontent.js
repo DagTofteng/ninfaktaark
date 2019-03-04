@@ -12,7 +12,8 @@
     "esri/tasks/support/Query",
     "esri/tasks/support/RelationshipQuery",
     "esri/views/MapView",
-    "esri/WebMap",
+    "esri/views/layers/FeatureLayerView",
+    "esri/WebMap"
 ], function (
     MainContentTemplate,
     topic,
@@ -27,7 +28,8 @@
     Query,
     RelationshipQuery,
     MapView,
-    WebMap,
+    FeatureLayerView,
+    WebMap
 ) {
 
         var MainContentViewModel = function () {
@@ -105,6 +107,7 @@
             self.printBilder = ko.observable(false);
             self.printNaturmangfold = ko.observable(false);
             self.printTilstand = ko.observable(false);
+            self.printAvailable = ko.observable(false);
 
             //Functions section-------------------------------------------------------------------------
             self.startUp = function () {
@@ -116,6 +119,7 @@
                     id = id_url
                 }
                 var id_lower = id.toString().toLowerCase();
+                var highlight;
 
                 self.getNaturtyper(id_lower).then(function (result) {
                     if (result.features.length > 0) {
@@ -145,17 +149,38 @@
                         self.faktaarkMap = new MapView({
                             id: 'faktaarkMap',
                             container: 'mapViewDiv',
-                            map: webmap
+                            map: webmap,
+                            highlightOptions: {
+                                color: [76, 230, 0, 1],    
+                                haloOpacity: 0.4,
+                                fillOpacity: 0.3
+                            }
                         });
 
-                        self.faktaarkMap.when(function () {
+                        
+
+                        self.faktaarkMap.when(function (evt) {
                             var layer = webmap.allLayers.find(function (layer) {
                                 return layer.id === "naturtyper_nin_8699";
                             });
 
-                            layer.definitionExpression = "lower(NiNID)='" + id_lower + "'";
-                            layer.refresh();
-                            self.faktaarkMap.goTo(geometry);
+                            self.faktaarkMap.whenLayerView(layer).then(function (layerView) {
+                                var query = layer.createQuery();
+                                query.where = "lower(NiNID)='" + id_lower + "'";
+                                layer.queryFeatures(query).then(function (result) {
+                                    if (highlight) {
+                                        highlight.remove();
+                                    }
+                                    highlight = layerView.highlight(result.features);
+                                    layer.refresh();
+                                    self.faktaarkMap.goTo(geometry);
+                                    self.printAvailable(true);
+                                });
+                            });
+                           
+
+                            
+                           
                         });
                         
 
@@ -203,7 +228,10 @@
                             var tempArr = [];
                             if (resKE[this]) {
 
-                                tempArr = resKE[this].features.map(k => k.attributes);     
+                                tempArr = resKE[this].features.map(function (k) {
+                                    return k.attributes;
+                                });
+
                                 self.kartleggingsEnheterList(tempArr);
                             }
                         }));
@@ -212,7 +240,9 @@
                         self.getRelationshipService(appconfig.layerSettings.indexRelationshipBeskrivelsesVariabler, self.ninObjectId()).then(lang.hitch(self.ninObjectId(), function (res) {
                             //this == self.ninObjectId();
                             if (res[this]) {
-                                var attrList = res[this].features.map(a => a.attributes);
+                                var attrList = res[this].features.map(function (a) {
+                                    return a.attributes;
+                                });
                                 // Alle oppføringer som IKKE har "mangfold" i TypeVariabel feltet skal i beskrivelsesvariabel tabellen
                                 var bvList = [];
                                 var mangfoldList = [];
@@ -267,8 +297,8 @@
                                     }
                                 });
 
-                                var bvListSorted = bvList.sort((a, b) => a.TypeVariabel.localeCompare(b.TypeVariabel));
-                                var mangfoldListSorted = mangfoldList.sort((a, b) => a.TypeVariabel.localeCompare(b.TypeVariabel));
+                                var bvListSorted = bvList.sort(function (a, b) { return a.TypeVariabel.localeCompare(b.TypeVariabel) });
+                                var mangfoldListSorted = mangfoldList.sort(function (a, b) { return a.TypeVariabel.localeCompare(b.TypeVariabel) });
                                 self.beskrivelsesVariabelList(bvListSorted);
                                 self.naturMangfoldList(mangfoldListSorted);
                             }
@@ -365,24 +395,40 @@
                 }
             };
 
-            self.togglePrintPopup = function () {
+            self.togglePrintPopup = function () {                
                 self.printPopupVisible(!self.printPopupVisible());
-            }
+            };
 
             self.printPage = function () {
+                self.takeScreenShot();
+                self.takeScreenShot();
+                self.takeScreenShot();
+                
                 self.naturMangfoldBeskrivelseVisible(true);
                 self.naturTypeBeskrivelseVisible(true);
                 self.tilstandBeskrivelseVisible(true);
                 window.print();
                 self.naturMangfoldBeskrivelseVisible(false);
                 self.naturTypeBeskrivelseVisible(false);
-                self.tilstandBeskrivelseVisible(false);
-            }
+                self.tilstandBeskrivelseVisible(false);                
+            };
+
+            self.takeScreenShot = function () {
+                self.faktaarkMap.takeScreenshot().then(function (screenshot) {
+                    var imageElement = document.getElementById("mapSceenshot");
+                    imageElement.src = screenshot.dataUrl;
+
+                });
+            };
+
+         
 
             self.setEvents = function () {
                 $(document).on("click", "#thumbnailGallery img, #thumbnailGallery a", function () {
                     $("#modalGallery").modal("show");
                 });
+
+              
             };
 
 
