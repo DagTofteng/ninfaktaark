@@ -232,7 +232,7 @@
                                     return k.attributes;
                                 });
                                 var keArr = [];
-                                var urlArtsdb = "https://artsdatabanken.no/nin2.0/";
+                                var urlArtsdb = appconfig.path.urlArtsDatabankenKartleggingsEnheter;
                                 array.forEach(tempArr, function (item) {
                                     if (item.NiN_kode) {
                                         var kodeSplit = item.NiN_kode.split("NA_");
@@ -263,7 +263,7 @@
                                 // Alle oppføringer som IKKE har "mangfold" i TypeVariabel feltet skal i beskrivelsesvariabel tabellen
                                 var bvList = [];
                                 var mangfoldList = [];
-                                var urlArtsdb = "https://artsdatabanken.no/nin/na/bs/";
+                                var urlArtsdb = appconfig.path.urlArtsDatabankenBeskrivelsesvariabler; 
                                 array.forEach(attrList, function (item) {
                                     if (item.TypeVariabel.toLowerCase().indexOf("mangfold") == -1) {
                                         //Hvis VariabelGruppe er MdirVariabel, så skal vi ikke linke til Artsdatabanken
@@ -447,8 +447,52 @@
                     $("#modalGallery").modal("show");
                 });
 
+                self.setAutoCompleteSearch();
               
             };
+
+            self.queryLocations = function(query, suggest) {
+                var url = appconfig.path.urlNaturtyper + appconfig.layerSettings.indexNaturTypeAlle + "/query";                
+                var options = {
+                    query: {
+                        f: 'json',
+                        outFields: ["NiNID,Områdenavn"],
+                        where: "lower(Områdenavn) like '%" + query + "%' OR lower(NiNID) like '%" + query + "%'",
+                        orderByFields: ["NiNID"],
+                        resultRecordCount: 20
+                    },
+                    responseType: 'json'
+                }
+                esriRequest(url, options).then(function (response) {
+                    var arr = response.data.features.map(function (a) {
+                        var obj = {
+                            name: a.attributes.Områdenavn,
+                            id: a.attributes.NiNID
+                        }
+                        return obj;
+                    });
+                    return suggest(arr);
+                });
+            };
+
+            self.setAutoCompleteSearch = function () {
+                $('#searchInput').autoComplete(                    
+                    {                        
+                        minChars: 1,
+                        cache: false,
+                        source: function (query, suggest) {
+                            return self.queryLocations(query, suggest);                            
+                        },
+                        renderItem: function (item, search) {                                  
+                            return '<div class="autocomplete-suggestion" data-langname="' + item.id + '" data-lang="' + item.name + '" data-val="' + search + '">' + item.id + ' - ' + item.name + '</div>';
+                        },
+                        onSelect: function (e, term, item) {
+                            var id = item.data('langname');
+                            var url = [location.protocol, '//', location.host, location.pathname].join('');
+                            window.location.href = url + "?id=" + id;
+                        }
+                    });            
+            }
 
 
             self.startUp();
