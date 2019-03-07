@@ -373,6 +373,7 @@ th.sorted {
 #headerContainer {
     height: 80px;
     border-bottom: 1px solid #ccc;
+    background: #e4e4e4;
 }
 
 
