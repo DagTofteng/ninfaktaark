@@ -11,7 +11,8 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.min.css">
-
+    
+    <link href="css/auto-complete.css" rel="stylesheet" />
     <link href="css/faktaark-nin.css" rel="stylesheet" />
     <link href="css/faktaark-nin_print.css" rel="stylesheet" media="print" />
 
@@ -21,13 +22,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/i18n/nb.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/i18n/nb.js"></script>    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.js"></script>
+
     <!--[if lt IE 9]>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
     <![endif]-->
 
 
-    
+
 
 </head>
 <body>
@@ -36,20 +39,30 @@
     <script>
         require(["js/app"]); 
     </script>
-    <appheader>
-        <nav class="navbar navbar-default navbar-fixed-top" id="headerContainer">
-            <div>
-                <div class="miljodirLogo">
-                    <img src="img/md_logo.png" width="152" />
+    
+        <div class="" id="headerContainer">
+            <div class="row">
+                <div class="col">
+                    <div class="miljodirLogo">
+                        <img src="img/md_logo.png" width="152" />
+                    </div>                    
+                    <div class="miljodirLogoStrek"></div>
+                    <div class="miljodirLogoText">
+                        <h3>NiN-Faktaark</h3>
+                    </div>                    
                 </div>
-                <div class="miljodirLogoStrek"></div>
-                <div class="miljodirLogoText">
-                    <h3>NiN-Faktaark</h3>
+                <div id="searchContainer" class="d-print-none text-right">
+                    <div class="input-group">                        
+                        <input class="typeahead form-control" type="text" id="searchInput" placeholder="Søk lokalitetnavn, id, naturtyper..." data-provide="typeahead" name="query">
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        </div>
+                    </div>
+                    
                 </div>
-            </div>
-
-        </nav>
-    </appheader>
+            </div>            
+        </div>
+    
     
     <div class="mainContainer">
         <div class="spinnerWrap" id="startupSpinner" style="display: none;">
