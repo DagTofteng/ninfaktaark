@@ -24,12 +24,11 @@ html {
 .mainContainer {
     background: white;
     height: auto;
+    overflow-y: visible;    
 }
-    .mainContainer::-webkit-scrollbar, html::-webkit-scrollbar {
-        width: 0 !important
-    }
-
-
+.mainContainer::-webkit-scrollbar, html::-webkit-scrollbar {
+    width: 0 !important
+}
 #thumbnailGalleryPrint {
     height: auto;
 }

@@ -343,6 +343,16 @@ th.sorted {
     width: 400px;
 }
 
+#searchContainer {
+    margin-right: 30px;
+    padding-top: 20px;
+    width: 400px;
+}
+
+#searchContainer .input-group-text {
+    background: #006964;
+    color: white;
+}
 
 .paddingRight15px {
     padding-right: 15px;
