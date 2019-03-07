@@ -53,7 +53,7 @@
             self.lokalitetKvalitetID = ko.observable();
             self.lokalitetKvalitetTekst = ko.observable();
             self.ninID = ko.observable();
-            self.lokalitetNavn = ko.observable();
+            self.omradeNavn = ko.observable();
             self.kommune = ko.observable();            
             self.tilstandID = ko.observable();
             self.tilstandTekst = ko.observable();            
@@ -104,7 +104,7 @@
             self.printPopupVisible = ko.observable(false);
             self.printIncludeList = ko.observableArray();
 
-            self.printBilder = ko.observable(true);
+            self.printBilder = ko.observable(false);
             self.printNaturmangfold = ko.observable(true);
             self.printTilstand = ko.observable(true);
             self.printAvailable = ko.observable(false);
@@ -193,7 +193,7 @@
                         self.lokalitetKvalitetID(feature.Lokalitetskvalitet);                        
                         self.lokalitetKvalitetTekst(self.getCodeTextFromID(feature.Lokalitetskvalitet, "Lokalitetskvalitet", result));
                         self.ninID(feature.NiNID);
-                        self.lokalitetNavn(feature.Områdenavn);
+                        self.omradeNavn(feature.Områdenavn);
                         self.kommune(feature.Kommuner);
                         self.tilstandID(feature.Tilstand);
                         self.tilstandTekst(self.getCodeTextFromID(feature.Tilstand, "Tilstand", result));
