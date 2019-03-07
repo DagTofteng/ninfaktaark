@@ -14,7 +14,8 @@
         var _indexRelationshipDekningskart = 2;
         var _agolWebMapID = "a758ae6e84f84b3fba426d14d7cc9d4b";
         var _artsDatabankenKartlegginsenheter = "https://artsdatabanken.no/nin2.0/";
-        var _artsDatabankenBeskrivelsesvariabler = "https://artsdatabanken.no/nin/na/bs/";
+        var _artsDatabankenBeskrivelsessystem = "https://artsdatabanken.no/nin/na/bs/";
+        var _artsDatabankenLKM = "https://artsdatabanken.no/nin/na/";
 
         //TEST settings
         if (environment === "TEST") {
@@ -25,7 +26,8 @@
             _indexRelationshipDekningskart = 2;
             _agolWebMapID = "a758ae6e84f84b3fba426d14d7cc9d4b";
             _artsDatabankenKartlegginsenheter = "https://artsdatabanken.no/nin2.0/";
-            _artsDatabankenBeskrivelsesvariabler = "https://artsdatabanken.no/nin/na/bs/";
+            _artsDatabankenBeskrivelsessystem = "https://artsdatabanken.no/nin/na/bs/";
+            _artsDatabankenLKM = "https://artsdatabanken.no/nin/na/";
         }
 
         //PROD settings
@@ -37,14 +39,16 @@
             _indexRelationshipDekningskart = 2;
             _agolWebMapID = "a758ae6e84f84b3fba426d14d7cc9d4b";
             _artsDatabankenKartlegginsenheter = "https://artsdatabanken.no/nin2.0/";
-            _artsDatabankenBeskrivelsesvariabler = "https://artsdatabanken.no/nin/na/bs/";
+            _artsDatabankenBeskrivelsessystem = "https://artsdatabanken.no/nin/na/bs/";
+            _artsDatabankenLKM = "https://artsdatabanken.no/nin/na/";
         }
 
         var appconfig = {            
             path: {
                 urlNaturtyper: _urlNaturtyper,
                 urlArtsDatabankenKartleggingsEnheter: _artsDatabankenKartlegginsenheter,
-                urlArtsDatabankenBeskrivelsesvariabler: _artsDatabankenBeskrivelsesvariabler
+                urlArtsDatabankenBeskrivelsesystem: _artsDatabankenBeskrivelsessystem,
+                urlArtsDatabankenLKM: _artsDatabankenLKM
             },
           
             layerSettings: {

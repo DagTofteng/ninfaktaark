@@ -263,16 +263,18 @@
                                 // Alle oppføringer som IKKE har "mangfold" i TypeVariabel feltet skal i beskrivelsesvariabel tabellen
                                 var bvList = [];
                                 var mangfoldList = [];
-                                var urlArtsdb = appconfig.path.urlArtsDatabankenBeskrivelsesvariabler; 
+                                var urlArtsdbBS = appconfig.path.urlArtsDatabankenBeskrivelsesystem;
+                                var urlArtsdbLKM = appconfig.path.urlArtsDatabankenLKM;
                                 array.forEach(attrList, function (item) {
+                                    var url = [];                                               
                                     if (item.TypeVariabel.toLowerCase().indexOf("mangfold") == -1) {
                                         //Hvis VariabelGruppe er MdirVariabel, så skal vi ikke linke til Artsdatabanken
                                         if (item.Variabelgruppe && item.Variabelgruppe.toLowerCase().indexOf("mdir") == -1) {
                                             if (item.Variabelkode && item.Variabelkode.length >= 3) {
-                                                var url = [];
+                                                
                                                 url[0] = item.Variabelkode.substring(0, 1);
                                                 url[1] = item.Variabelkode.substring(1, 3);
-                                                item.UrlArtsdatabanken = urlArtsdb + url[0] + "/" + url[1];
+                                                item.UrlArtsdatabanken = urlArtsdbBS + url[0] + "/" + url[1];                                                
                                             }
                                             else {
                                                 item.UrlArtsdatabanken = null;
@@ -281,6 +283,13 @@
                                         else {
                                             item.UrlArtsdatabanken = null;
                                         }
+
+                                        if (item.Variabelkode.substring(0, 3).toLowerCase() == "lkm") {
+                                            url[0] = item.Variabelkode.substring(0, 3);
+                                            url[1] = item.Variabelkode.substring(3, 5);
+                                            item.UrlArtsdatabanken = urlArtsdbLKM + url[0] + "/" + url[1];
+                                        }
+                                        
 
                                         if (item.TypeVariabel) {
                                             item.TypeVariabel = item.TypeVariabel.split(" ")[0];
