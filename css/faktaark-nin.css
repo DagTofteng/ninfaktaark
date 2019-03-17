@@ -158,8 +158,9 @@ h3 {
 
 h4 {
     font-family: 'Roboto','Palatino Linotype', Georgia, 'Times New Roman', Times, serif;
-    font-size: 14px;
+    font-size: 18px;
     color: #006964;
+    font-weight: 500;
     /*letter-spacing:0.5px;*/
     line-height: 27px;
     text-align: left;
@@ -330,6 +331,10 @@ th.sorted {
     padding: 10px 7px !important;
 }
 
+ul.nostyle li {
+    list-style-type: none;
+}
+
 .dropdown-menu > .active > a, .dropdown-menu > .active > a:focus, .dropdown-menu > .active > a:hover {
     background-color: #006469;
 }
@@ -341,6 +346,10 @@ th.sorted {
 }
 .w-400px {
     width: 400px;
+}
+
+.red {
+    color: red!important;
 }
 
 #searchContainer {

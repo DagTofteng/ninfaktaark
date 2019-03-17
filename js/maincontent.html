@@ -1,5 +1,5 @@
 ﻿<div class="row justify-content-center">
-    <div class="col-10 col-print-12">
+    <div class="col-10 col-print-12" data-bind="visible: ninID">
         <div class="row mt-3">
             <div class="col-10">
                 <h2 class="ml-1" data-bind="text: omradeNavn() + ' (' + ninID() + ')'"></h2>
@@ -63,7 +63,10 @@
                             </div>
                             <div class="row">
                                 <div class="w-200px paddingLeft15">Naturtype</div>
-                                <div class="col" data-bind="text:naturType"></div>
+                                <div class="col">
+                                    <span data-bind="text:naturType" />
+                                    (<a class="red" data-bind="attr: { href: naturTypeBeskrivelseArtsDBUrl }" target="_blank">Rødlistestatus</a>)
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="w-200px paddingLeft15">Utvalgskriterium</div>
@@ -158,7 +161,7 @@
                                             <td data-bind="text: Variabelnavn"></td>
                                             <td data-bind="text: Trinnkode != Trinnavn ? Trinnavn + ' (' + Trinnkode + ')' : Trinnavn"></td>
                                             <td class="w-120px">
-                                                <a data-bind="attr: { href: UrlArtsdatabanken }, text: Variabelkode" target="_blank">
+                                                <a data-bind="attr: { href: UrlArtsdatabanken, title: VariabelTitle }, text: Variabelkode" target="_blank">
                                                 </a>
                                             </td>
                                         </tr>
@@ -231,7 +234,7 @@
                                             <td data-bind="text: Variabelnavn"></td>
                                             <td data-bind="text: Trinnavn"></td>
                                             <td>
-                                                <a data-bind="attr: { href: UrlArtsdatabanken }, text: Variabelkode" target="_blank">
+                                                <a data-bind="attr: { href: UrlArtsdatabanken, title: VariabelTitle }, text: Variabelkode" target="_blank">
                                                 </a>
                                             </td>
                                         </tr>
@@ -248,7 +251,7 @@
             <div class="col-12">
                 <div class="card">
                     <h5 class="card-header">
-                        NiN kartleggingsenhet(er)
+                        NiN kartleggingsenhet(er) og definerende variabler
                     </h5>
                     <div class="card-body">
                         <table class="table table-striped table-hover table-sm">
@@ -362,11 +365,23 @@
 
                             </div>-->
                                 <div class="col">
-                                    <span data-bind="text:naturTypeBeskrivelseVisible() ? naturTypeBeskrivelseLang : naturTypeBeskrivelseKort"></span>
-                                    <a href="javascript:void(0)" data-bind="click: toggleNaturTypeBeskrivelse">
-                                        <span class="d-print-none" data-bind="text:naturTypeBeskrivelseVisible() ? '(les mindre...)' : '(les mer...)'"></span>
-                                    </a>
+                                    <ul class="p-0 nostyle">
+                                        <li class="mb-2">
+                                            - <span data-bind="text:naturTypeBeskrivelseVisible() ? naturTypeBeskrivelseLang : naturTypeBeskrivelseKort"></span>
+                                            <a href="javascript:void(0)" data-bind="click: toggleNaturTypeBeskrivelse">
+                                                <span class="d-print-none" data-bind="text:naturTypeBeskrivelseVisible() ? '(les mindre...)' : '(les mer...)'"></span>
 
+                                            </a>
+                                        </li>
+                                        <li class="mb-2" data-bind="visible: naturTypeBeskrivelseNavarendeStatus2018">
+                                            - <span data-bind="text: naturTypeBeskrivelseNavarendeStatus2018"></span>
+                                        </li>
+                                        <li data-bind="visible: naturTypeBeskrivelseArtsDBUrl">
+                                            - <a data-bind="attr: { href: naturTypeBeskrivelseArtsDBUrl }" target="_blank">
+                                                Norsk rødliste for naturtyper
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
 
@@ -379,54 +394,7 @@
         </div>
 
 
-        <div class="row mt-3 pageBreakOnPrint">
-            <!--<div class="col-lg-6 col-md-12 col-print-12">
-            <div class="card">
-                <h5 class="card-header">
-                    Dekningskart (prosjektområde)
-                </h5>
-                <div class="card-body row">
-                    <div class="col-12">
-                        <div class="row">
-                            <div class="w-200px paddingLeft15">Årstall</div>
-                            <div class="col" data-bind="text:dekningAarstall"></div>
-                        </div>
-                        <div class="row">
-                            <div class="w-200px paddingLeft15">Kartleggerfirma</div>
-                            <div class="col" data-bind="text:dekningKartleggerFirma"></div>
-                        </div>
-
-                        <div class="row">
-                            <div class="w-200px paddingLeft15">Oppdragsgiver</div>
-                            <div class="col" data-bind="text:dekningOppdragsgiver"></div>
-                        </div>
-                        <div class="row">
-                            <div class="w-200px paddingLeft15">Program</div>
-                            <div class="col" data-bind="text:dekningProgram"></div>
-                        </div><div class="row">
-                            <div class="w-200px paddingLeft15">Programkode</div>
-                            <div class="col" data-bind="text:dekningProgramKode"></div>
-                        </div>
-                        <div class="row">
-                            <div class="w-200px paddingLeft15">Prosjektområdenavn</div>
-                            <div class="col" data-bind="text:dekningProsjektomradenavn"></div>
-                        </div>
-                        <div class="row">
-                            <div class="w-200px paddingLeft15">Prosjektnavn</div>
-                            <div class="col" data-bind="text:dekningProsjektnavn"></div>
-                        </div>
-                        <div class="row">
-                            <div class="w-200px paddingLeft15">Areal</div>
-                            <div class="col" data-bind="text:dekningAreal"></div>
-                        </div>
-
-
-
-                    </div>
-
-                </div>
-            </div>
-        </div>-->
+        <div class="row mt-3 pageBreakOnPrint">          
             <div class="col-12 d-print-none" id="mapCardContainer">
                 <div class="card">
                     <h5 class="card-header">
@@ -471,6 +439,11 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="col-10" data-bind="visible: !ninID()">
+        <h4 class="mt-4">Ooops! Du har ikke angitt en gyldig NiNID i nettadressen.</h4>
+        <h6>Du kan bruke søket øverst på siden til å søke opp gyldige NiNIDer eller områdenavn</h6>
+
     </div>
 </div>
 

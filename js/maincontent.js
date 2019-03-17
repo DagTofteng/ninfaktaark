@@ -33,14 +33,21 @@
 ) {
 
         var MainContentViewModel = function () {
-            var self = this;
-            var id = "NINFP1810002772";
+            var self = this;           
 
-            var urlNaturTyper = appconfig.path.urlNaturtyper + appconfig.layerSettings.indexNaturTypeAlle;
+            
             var naturTyperFeatureLayer = new FeatureLayer({
-                url: urlNaturTyper,
+                url: appconfig.path.urlNaturtyper + appconfig.layerSettings.indexNaturTypeAlle,
                 outFields: ["*"]                
-            });         
+            });    
+            var beskrivelsesVariablerFeatureLayer = new FeatureLayer({
+                url: appconfig.path.urlNaturtyper + appconfig.layerSettings.indexTableBeskrivelsesVariabler,
+                outFields: ["*"]
+            });    
+            var naturtypeBeskrivelseFeatureLayer = new FeatureLayer({
+                url: appconfig.path.urlNaturtyper + appconfig.layerSettings.indexTableNaturtypeBeskrivelse,
+                outFields: ["*"]
+            });    
 
             //Observables/properties section------------------------------------------------------------            
             self.beskrivelsesVariabelList = ko.observableArray();
@@ -83,6 +90,8 @@
             self.naturTypeBeskrivelseKort = ko.observable();
             self.naturTypeBeskrivelseLang = ko.observable();
             self.naturTypeBeskrivelseVisible = ko.observable(false);
+            self.naturTypeBeskrivelseArtsDBUrl = ko.observable();
+            self.naturTypeBeskrivelseNavarendeStatus2018 = ko.observable();
 
             self.dekningAarstall = ko.observable();
             self.dekningKartleggerFirma = ko.observable();
@@ -109,247 +118,290 @@
             self.printTilstand = ko.observable(true);
             self.printAvailable = ko.observable(false);
 
+            self.beskrivelsesVariabelMdirList = [];
+
             //Functions section-------------------------------------------------------------------------
             self.startUp = function () {
 
                 self.setEvents();
 
+                var highlight;
                 var id_url = self.getURLParameter("id");
                 if (id_url) {
-                    id = id_url
-                }
-                var id_lower = id.toString().toLowerCase();
-                var highlight;
+                    var id_lower = id_url.toString().toLowerCase();
 
-                self.getNaturtyper(id_lower).then(function (result) {
-                    if (result.features.length > 0) {
-                        var feature = result.features[0].attributes;
-                        var geometry = result.features[0].geometry;
-
-                        // TODO - get photoes from service
-                        var photoes = [
-                            { url: "https://placeimg.com/600/300/nature" },
-                            { url: "https://placeimg.com/600/300/tech" },
-                            { url: "https://placeimg.com/600/300/arch" },
-                            { url: "https://placeimg.com/600/300/people" },
-                            { url: "https://placeimg.com/600/300/animals" }
-                        ];
-                        self.photoList(photoes);
-                        if (self.photoList().length > 3) {
-                            var countMoreThan3 = self.photoList().length - 3;
-                            self.thumbnailText("+ " + countMoreThan3 + " bilder");
+                    //// Henter inn kodelister og lagrer lokalt
+                    self.getBeskivelsesVariablerMdir().then(function (resBVMdir) {
+                        if (resBVMdir.features.length > 0) {
+                            self.beskrivelsesVariabelMdirList = resBVMdir.features.map(function (a) { return a.attributes });
                         }
+                    });
+                    self.getNaturtyper(id_lower).then(function (result) {
+                        if (result.features.length > 0) {
+                            var feature = result.features[0].attributes;
+                            var geometry = result.features[0].geometry;
 
-                        var webmap = new WebMap({
-                            portalItem: {
-                                id: appconfig.map.agolWebMapID
+                            // TODO - get photoes from service
+                            var photoes = [
+                                { url: "https://placeimg.com/600/300/nature" },
+                                { url: "https://placeimg.com/600/300/tech" },
+                                { url: "https://placeimg.com/600/300/arch" },
+                                { url: "https://placeimg.com/600/300/people" },
+                                { url: "https://placeimg.com/600/300/animals" }
+                            ];
+                            self.photoList(photoes);
+                            if (self.photoList().length > 3) {
+                                var countMoreThan3 = self.photoList().length - 3;
+                                self.thumbnailText("+ " + countMoreThan3 + " bilder");
                             }
-                        });                           
-                           
-                        self.faktaarkMap = new MapView({
-                            id: 'faktaarkMap',
-                            container: 'mapViewDiv',
-                            map: webmap,
-                            highlightOptions: {
-                                color: [76, 230, 0, 1],    
-                                haloOpacity: 0.4,
-                                fillOpacity: 0.3
-                            }
-                        });
 
-                        
-
-                        self.faktaarkMap.when(function (evt) {
-                            var layer = webmap.allLayers.find(function (layer) {
-                                return layer.id === "naturtyper_nin_8699";
+                            var webmap = new WebMap({
+                                portalItem: {
+                                    id: appconfig.map.agolWebMapID
+                                }
                             });
 
-                            self.faktaarkMap.whenLayerView(layer).then(function (layerView) {
-                                var query = layer.createQuery();
-                                query.where = "lower(NiNID)='" + id_lower + "'";
-                                layer.queryFeatures(query).then(function (result) {
-                                    if (highlight) {
-                                        highlight.remove();
-                                    }
-                                    highlight = layerView.highlight(result.features);
-                                    layer.refresh();
-                                    self.faktaarkMap.goTo(geometry);
-                                    self.printAvailable(true);
+                           
+
+                            self.faktaarkMap = new MapView({
+                                id: 'faktaarkMap',
+                                container: 'mapViewDiv',
+                                map: webmap,
+                                highlightOptions: {
+                                    color: [76, 230, 0, 1],
+                                    haloOpacity: 0.4,
+                                    fillOpacity: 0.3
+                                }
+                            });
+
+
+
+                            self.faktaarkMap.when(function (evt) {
+                                var layer = webmap.allLayers.find(function (layer) {
+                                    return layer.id === "naturtyper_nin_8699";
                                 });
-                            });
-                           
 
+                                self.faktaarkMap.whenLayerView(layer).then(function (layerView) {
+                                    var query = layer.createQuery();
+                                    query.where = "lower(NiNID)='" + id_lower + "'";
+                                    layer.queryFeatures(query).then(function (result) {
+                                        if (highlight) {
+                                            highlight.remove();
+                                        }
+                                        highlight = layerView.highlight(result.features);
+                                        layer.refresh();
+                                        self.faktaarkMap.goTo(geometry);
+                                        self.printAvailable(true);
+                                    });
+                                });
+
+
+
+
+                            });
+
+
+
+
+
+                            self.ninObjectId(feature.OBJECTID);
+                            self.naturType(feature.Naturtype);
                             
-                           
-                        });
-                        
+                            self.lokalitetKvalitetID(feature.Lokalitetskvalitet);
+                            self.lokalitetKvalitetTekst(self.getCodeTextFromID(feature.Lokalitetskvalitet, "Lokalitetskvalitet", result));
+                            self.ninID(feature.NiNID);
+                            self.omradeNavn(feature.Områdenavn);
+                            self.kommune(feature.Kommuner);
+                            self.tilstandID(feature.Tilstand);
+                            self.tilstandTekst(self.getCodeTextFromID(feature.Tilstand, "Tilstand", result));
+                            self.tilstandBeskrivelse(feature.Tilstandbeskrivelse);
+                            self.naturMangfoldBeskrivelse(feature.Naturmangfoldbeskrivelse);
+                            self.naturMangfoldID(feature.Naturmangfold);
+                            self.naturMangfoldTekst(self.getCodeTextFromID(feature.Naturmangfold, "Naturmangfold", result));
 
+                            var areal = Math.round(feature["SHAPE.STArea()"]);
+                            self.areal(areal.toLocaleString('no-NB') + ' m²');
+                            self.hovedOkosystem(feature.Hovedøkosystem);
+                            self.mosaikkID(feature.Mosaikk);
+                            self.mosaikkTekst(self.getCodeTextFromID(feature.Mosaikk, "Mosaikk", result));
+                            self.noyaktighetID(feature.Nøyaktighet);
+                            self.noyaktighetTekst(self.getCodeTextFromID(feature.Nøyaktighet, "Nøyaktighet", result));
+                            self.usikkerhetID(feature.Usikkerhet);
+                            self.usikkerhetTekst(self.getCodeTextFromID(feature.Usikkerhet, "Usikkerhet", result));
+                            self.usikkerhetBeskrivelse(feature.Usikkerhetsbeskrivelse);
+                            self.kartleggingsDato(new Date(feature.Kartleggingsdato).toLocaleDateString('no-NB'));
+                            self.kartleggingsAar(feature.Kartleggingsår);
+                            self.oppdragsgiverID(feature.Oppdragsgiver);
+                            self.oppdragsgiverTekst(self.getCodeTextFromID(feature.Oppdragsgiver, "Oppdragsgiver", result));
+                            self.kartleggerFirma(feature.KartleggerFirma);
+                            self.kartlegger(feature.Kartlegger);
+                            self.naturTypeKode(feature.Naturtypekode);
+                            
 
-                        
+                            // Get kartleggingsenheter
+                            self.getRelationshipService(appconfig.layerSettings.indexRelationshipKartleggingsenhet, self.ninObjectId()).then(lang.hitch(self.ninObjectId(), function (resKE) {
+                                //this == self.ninObjectId();
+                                var tempArr = [];
+                                if (resKE[this]) {
 
-                        self.ninObjectId(feature.OBJECTID);
-                        self.naturType(feature.Naturtype);
-                        self.utvalgsKriterium("Ikke implementert - TODO");
-                        self.lokalitetKvalitetID(feature.Lokalitetskvalitet);                        
-                        self.lokalitetKvalitetTekst(self.getCodeTextFromID(feature.Lokalitetskvalitet, "Lokalitetskvalitet", result));
-                        self.ninID(feature.NiNID);
-                        self.omradeNavn(feature.Områdenavn);
-                        self.kommune(feature.Kommuner);
-                        self.tilstandID(feature.Tilstand);
-                        self.tilstandTekst(self.getCodeTextFromID(feature.Tilstand, "Tilstand", result));
-                        self.tilstandBeskrivelse(feature.Tilstandbeskrivelse);
-                        self.naturMangfoldBeskrivelse(feature.Naturmangfoldbeskrivelse);
-                        self.naturMangfoldID(feature.Naturmangfold);
-                        self.naturMangfoldTekst(self.getCodeTextFromID(feature.Naturmangfold, "Naturmangfold", result));
-
-                        var areal = Math.round(feature["SHAPE.STArea()"]);
-                        self.areal(areal.toLocaleString('no-NB') + ' m²');
-                        self.hovedOkosystem(feature.Hovedøkosystem);
-                        self.mosaikkID(feature.Mosaikk);
-                        self.mosaikkTekst(self.getCodeTextFromID(feature.Mosaikk, "Mosaikk", result));
-                        self.noyaktighetID(feature.Nøyaktighet);
-                        self.noyaktighetTekst(self.getCodeTextFromID(feature.Nøyaktighet, "Nøyaktighet", result));
-                        self.usikkerhetID(feature.Usikkerhet);
-                        self.usikkerhetTekst(self.getCodeTextFromID(feature.Usikkerhet, "Usikkerhet", result));
-                        self.usikkerhetBeskrivelse(feature.Usikkerhetsbeskrivelse);
-                        self.kartleggingsDato(new Date(feature.Kartleggingsdato).toLocaleDateString('no-NB'));
-                        self.kartleggingsAar(feature.Kartleggingsår);
-                        self.oppdragsgiverID(feature.Oppdragsgiver);
-                        self.oppdragsgiverTekst(self.getCodeTextFromID(feature.Oppdragsgiver, "Oppdragsgiver", result));
-                        self.kartleggerFirma(feature.KartleggerFirma);
-                        self.kartlegger(feature.Kartlegger);
-                        self.naturTypeKode(feature.Naturtypekode);
-                        self.naturTypeBeskrivelseKort("TODO - Kystlynghei omfatter åpne heipregete økosystemer som er betinget av lyngbrenning, gjerne i kombinasjon med beiting store deler av året og/eller slått. Dominans av dvergbusker, først og fremst nøkkelarten røsslyng (Calluna vulgaris), er typisk.");
-                        self.naturTypeBeskrivelseLang("TODO - Kystlynghei omfatter åpne heipregete økosystemer som er betinget av lyngbrenning, gjerne i kombinasjon med beiting store deler av året og/eller slått. Dominans av dvergbusker, først og fremst nøkkelarten røsslyng (Calluna vulgaris), er typisk. Røsslyng har utviklet tilpasninger til det spesielle hevdregimet som har opprettholdt kystlynghei.Det er f.eks.dokumentert gjennom eksperimentelle undersøkelser at røsslyngfrøenes spiring begunstiges av brann(røyk) i, men ikke utenfor, kystlyngheibeltet(Måren et al. 2010).Kystlyngheier kan imidlertid ha sterkt innslag også av andre lyngarter, som f.eks.krekling(Empetrum nigrum), klokkelyng(Erica tetralix) og blokkebær(Vaccinium uliginosum) og / eller av lite kalkkrevende graminider, som blåtopp(Molinia caerulea) og bjørneskjegg(Trichophorum cespitosum).Kystlyngheier i bruk mangler eller har svært sparsom forekomst av moser og lav.Kystlyngheiene er formet gjennom rydding av kratt og trær og flere tusen års hevd, der nøkkelfaktoren i hevdregimet er lyngbrenning, og hvor typisk også beiting gjennom store deler av, eller hele, vekstsesongen er viktig(se Måren & Vandvik 2009, Måren et al. 2010, og NiN[2]AR1, kapittel B3h og Fig.B3–5).Et vintermildt(oseanisk) klima er en forutsetning for en lang beitesesong, og kystlynghei er derfor først og fremst knyttet til kystnære lavlandsområder.Kystlynghei finnes i et breit belte langs kysten fra Kragerø i Telemark til Lofoten i Nordland, kanskje også på Hvaler i Østfold som en nordlig utløper av det vestsvenske lyngheiområdet.Heier betinget av lyngbrenning, som skal tilordnes kystlyngheiene, forekommer imidlertid også i høyereliggende områder litt innenfor kysten, i Dalane(Rogaland) opp til ca. 400 m o.h. (Steinnes 1988).Størstedelen av kystlynghei - arealet gror nå igjen som følge av at bruken har opphørt");
-
-                        // Get kartleggingsenheter
-                        self.getRelationshipService(appconfig.layerSettings.indexRelationshipKartleggingsenhet, self.ninObjectId()).then(lang.hitch(self.ninObjectId(), function (resKE) {
-                            //this == self.ninObjectId();
-                            var tempArr = [];
-                            if (resKE[this]) {
-
-                                tempArr = resKE[this].features.map(function (k) {
-                                    return k.attributes;
-                                });
-                                var keArr = [];
-                                var urlArtsdb = appconfig.path.urlArtsDatabankenKartleggingsEnheter;
-                                array.forEach(tempArr, function (item) {
-                                    if (item.NiN_kode) {
-                                        var kodeSplit = item.NiN_kode.split("NA_");
-                                        var kode = item.NiN_kode;
-                                        if (kodeSplit.length > 1) {
-                                            kode = kodeSplit[1];
+                                    tempArr = resKE[this].features.map(function (k) {
+                                        return k.attributes;
+                                    });
+                                    var keArr = [];
+                                    var urlArtsdbKE = appconfig.path.urlArtsDatabankenKartleggingsEnheter;
+                                    array.forEach(tempArr, function (item) {
+                                        if (item.NiN_kode) {
+                                            var kodeSplit = item.NiN_kode.split("NA_");
+                                            var kode = item.NiN_kode;
+                                            if (kodeSplit.length > 1) {
+                                                kode = kodeSplit[1];
+                                            }
+                                            item.UrlNiN_kode = urlArtsdbKE + kode;
                                         }
-                                        item.UrlNiN_kode = urlArtsdb + kode;                                        
-                                    }
-                                    else {
-                                        item.UrlNin_kode = null;
-                                    }
-                                    keArr.push(item);
-                                });
-                                
+                                        else {
+                                            item.UrlNin_kode = null;
+                                        }
+                                        keArr.push(item);
+                                    });
 
-                                self.kartleggingsEnheterList(keArr);
-                            }
-                        }));
 
-                        // Get beskrivelsesvariabler
-                        self.getRelationshipService(appconfig.layerSettings.indexRelationshipBeskrivelsesVariabler, self.ninObjectId()).then(lang.hitch(self.ninObjectId(), function (res) {
-                            //this == self.ninObjectId();
-                            if (res[this]) {
-                                var attrList = res[this].features.map(function (a) {
-                                    return a.attributes;
-                                });
-                                // Alle oppføringer som IKKE har "mangfold" i TypeVariabel feltet skal i beskrivelsesvariabel tabellen
-                                var bvList = [];
-                                var mangfoldList = [];
-                                var urlArtsdbBS = appconfig.path.urlArtsDatabankenBeskrivelsesystem;
-                                var urlArtsdbLKM = appconfig.path.urlArtsDatabankenLKM;
-                                array.forEach(attrList, function (item) {
-                                    var url = [];                                               
-                                    if (item.TypeVariabel.toLowerCase().indexOf("mangfold") == -1) {
-                                        //Hvis VariabelGruppe er MdirVariabel, så skal vi ikke linke til Artsdatabanken
-                                        if (item.Variabelgruppe && item.Variabelgruppe.toLowerCase().indexOf("mdir") == -1) {
-                                            if (item.Variabelkode && item.Variabelkode.length >= 3) {
+                                    self.kartleggingsEnheterList(keArr);
+                                }
+                            }));
+
+                            // Get beskrivelsesvariabler
+                            self.getRelationshipService(appconfig.layerSettings.indexRelationshipBeskrivelsesVariabler, self.ninObjectId()).then(lang.hitch(self.ninObjectId(), function (res) {
+                                //this == self.ninObjectId();
+                                if (res[this]) {
+                                    var attrList = res[this].features.map(function (a) {
+                                        return a.attributes;
+                                    });
+                                    // Alle oppføringer som IKKE har "mangfold" i TypeVariabel feltet skal i beskrivelsesvariabel tabellen
+                                    var bvList = [];
+                                    var mangfoldList = [];
+                                    var urlArtsdbBS = appconfig.path.urlArtsDatabankenBeskrivelsesystem;
+                                    var urlArtsdbLKM = appconfig.path.urlArtsDatabankenLKM;
+
+                                    array.forEach(attrList, function (item) {
+                                        item.VariabelTitle = "tetestes";
+                                        var url = [];
+                                        if (item.TypeVariabel.toLowerCase().indexOf("mangfold") == -1) {
+                                            //Hvis VariabelGruppe IKKE er MdirVariabel, link til Artsdatabanken
+                                            if (item.Variabelgruppe && item.Variabelgruppe.toLowerCase().indexOf("mdir") == -1) {
+                                                if (item.Variabelkode && item.Variabelkode.length >= 3) {
+
+                                                    url[0] = item.Variabelkode.substring(0, 1);
+                                                    url[1] = item.Variabelkode.substring(1, 3);
+                                                    item.UrlArtsdatabanken = urlArtsdbBS + url[0] + "/" + url[1];
+                                                }
+                                                else {
+                                                    item.UrlArtsdatabanken = null;
+                                                }
+                                            }
+                                            // Hvis VariabelGruppe ER Mdir slår vi opp mot tjenesten
+                                            else {
+
+                                                item.UrlArtsdatabanken = "javascript:void(0)";
+                                                array.forEach(self.beskrivelsesVariabelMdirList, function (bv) {
+                                                    if (bv.MdirBVKode == item.Variabelkode.substring(0, 4)) {
+                                                        item.VariabelTitle = bv.MdirBVBeskrivelse;
+                                                    }
+                                                });
                                                 
-                                                url[0] = item.Variabelkode.substring(0, 1);
-                                                url[1] = item.Variabelkode.substring(1, 3);
-                                                item.UrlArtsdatabanken = urlArtsdbBS + url[0] + "/" + url[1];                                                
                                             }
+
+                                            if (item.Variabelkode.substring(0, 3).toLowerCase() == "lkm") {
+                                                url[0] = item.Variabelkode.substring(0, 3);
+                                                url[1] = item.Variabelkode.substring(3, 5);
+                                                item.UrlArtsdatabanken = urlArtsdbLKM + url[0] + "/" + url[1];
+                                            }
+
+
+                                            if (item.TypeVariabel) {
+                                                item.TypeVariabel = item.TypeVariabel.split(" ")[0];
+                                            }
+                                            bvList.push(item);
+                                        }
+                                    });
+                                    // Alle oppføringer som har "mangfold" i TypeVariabel feltet skal i naturmangfold tabellen                                
+                                    array.forEach(attrList, function (item) {
+                                        item.VariabelTitle = "";
+                                        if (item.TypeVariabel.toLowerCase().indexOf("mangfold") > -1) {
+                                            //Hvis VariabelGruppe IKKE er MdirVariabel, så skal vi linke til Artsdatabanken
+                                            if (item.Variabelgruppe && item.Variabelgruppe.toLowerCase().indexOf("mdir") == -1) {
+                                                if (item.Variabelkode && item.Variabelkode.length >= 3) {
+                                                    var url = [];
+                                                    url[0] = item.Variabelkode.substring(0, 1);
+                                                    url[1] = item.Variabelkode.substring(1, 3);
+                                                    item.UrlArtsdatabanken = urlArtsdbBS + url[0] + "/" + url[1];
+                                                }
+                                                else {
+                                                    item.UrlArtsdatabanken = null;
+                                                }
+                                            }
+                                            // Hvis VariabelGruppe ER Mdir slår vi opp mot tjenesten
                                             else {
-                                                item.UrlArtsdatabanken = null;
+                                                item.UrlArtsdatabanken = "javascript:void(0)";
+                                                array.forEach(self.beskrivelsesVariabelMdirList, function (bv) {
+                                                    if (bv.MdirBVKode == item.Variabelkode.substring(0,4)) {
+                                                        item.VariabelTitle = bv.MdirBVBeskrivelse;
+                                                    }
+                                                });
                                             }
-                                        }
-                                        else {
-                                            item.UrlArtsdatabanken = null;
-                                        }
 
-                                        if (item.Variabelkode.substring(0, 3).toLowerCase() == "lkm") {
-                                            url[0] = item.Variabelkode.substring(0, 3);
-                                            url[1] = item.Variabelkode.substring(3, 5);
-                                            item.UrlArtsdatabanken = urlArtsdbLKM + url[0] + "/" + url[1];
+                                            if (item.TypeVariabel) {
+                                                item.TypeVariabel = item.TypeVariabel.split(" ")[0];
+                                            }
+                                            mangfoldList.push(item);
                                         }
-                                        
+                                    });
 
-                                        if (item.TypeVariabel) {
-                                            item.TypeVariabel = item.TypeVariabel.split(" ")[0];
-                                        }
-                                        bvList.push(item);
+                                    var bvListSorted = bvList.sort(function (a, b) { return a.TypeVariabel.localeCompare(b.TypeVariabel) });
+                                    var mangfoldListSorted = mangfoldList.sort(function (a, b) { return a.TypeVariabel.localeCompare(b.TypeVariabel) });
+                                    self.beskrivelsesVariabelList(bvListSorted);
+                                    self.naturMangfoldList(mangfoldListSorted);
+                                }
+                            }));
+
+                            // Get dekningskart
+                            self.getRelationshipService(appconfig.layerSettings.indexRelationshipDekningskart, self.ninObjectId()).then(lang.hitch(self.ninObjectId(), function (resDekn) {
+                                //this == self.ninObjectId();
+                                if (resDekn[this]) {
+                                    var obj = resDekn[this].features[0].attributes;
+                                    self.dekningAarstall(obj.Årstall);
+                                    self.dekningKartleggerFirma(obj.KartleggerFirma);
+                                    self.dekningKartleggingsInstruks(obj.Kartleggingsinstruks);
+                                    self.dekningOppdragsgiver(obj.Oppdragsgiver);
+                                    self.dekningProgram(obj.Program);
+                                    self.dekningProgramKode(obj.Programkode);
+                                    self.dekningProsjektomradenavn(obj.Prosjektområdenavn);
+                                    self.dekningProsjektnavn(obj.Prosjektnavn);
+                                    var dekningAreal = Math.round(obj["SHAPE.STArea()"]);
+                                    self.dekningAreal(dekningAreal.toLocaleString('no-NB') + ' m²');
+                                }
+                            }));
+
+                            self.getNaturtypeBeskrivelse(feature.Naturtypekode).then(function (naturTypeRes) {
+                                if (naturTypeRes.features.length > 0) {
+                                    var feature = naturTypeRes.features[0].attributes;      
+                                    self.naturTypeBeskrivelseLang(feature.NaturtypeBeskrivelse);
+                                    self.naturTypeBeskrivelseKort(feature.NaturtypeBeskrivelse.substring(0, 300));
+                                    self.utvalgsKriterium(feature.Utvalgskriterium);
+                                    if (feature.ArtsdatabankenURL) {
+                                        self.naturTypeBeskrivelseArtsDBUrl(feature.ArtsdatabankenURL);
                                     }
-                                });
-                                // Alle oppføringer som har "mangfold" i TypeVariabel feltet skal i naturmangfold tabellen                                
-                                array.forEach(attrList, function (item) {
-                                    if (item.TypeVariabel.toLowerCase().indexOf("mangfold") > -1) {
-                                        //Hvis VariabelGruppe er MdirVariabel, så skal vi ikke linke til Artsdatabanken
-                                        if (item.Variabelgruppe && item.Variabelgruppe.toLowerCase().indexOf("mdir") == -1) {                                            
-                                            if (item.Variabelkode && item.Variabelkode.length >= 3) {
-                                                var url = [];
-                                                url[0] = item.Variabelkode.substring(0, 1);
-                                                url[1] = item.Variabelkode.substring(1, 3);
-                                                item.UrlArtsdatabanken = urlArtsdb + url[0] + "/" + url[1];
-                                            }
-                                            else {
-                                                item.UrlArtsdatabanken = null;
-                                            }
-                                        }
-                                        else {
-                                            item.UrlArtsdatabanken = null;
-                                        }
-
-                                        if (item.TypeVariabel) {
-                                            item.TypeVariabel = item.TypeVariabel.split(" ")[0];
-                                        }
-                                        mangfoldList.push(item);
+                                    if (feature.NavarendeStatus2018Data) {
+                                        self.naturTypeBeskrivelseNavarendeStatus2018(feature.NavarendeStatus2018Data);
                                     }
-                                });
+                                    
+                                }
+                            });
+                        };
+                    });
+                }
+                else {
 
-                                var bvListSorted = bvList.sort(function (a, b) { return a.TypeVariabel.localeCompare(b.TypeVariabel) });
-                                var mangfoldListSorted = mangfoldList.sort(function (a, b) { return a.TypeVariabel.localeCompare(b.TypeVariabel) });
-                                self.beskrivelsesVariabelList(bvListSorted);
-                                self.naturMangfoldList(mangfoldListSorted);
-                            }
-                        }));
-
-                        // Get dekningskart
-                        self.getRelationshipService(appconfig.layerSettings.indexRelationshipDekningskart, self.ninObjectId()).then(lang.hitch(self.ninObjectId(), function (resDekn) {
-                            //this == self.ninObjectId();
-                            if (resDekn[this]) {
-                                var obj = resDekn[this].features[0].attributes;
-                                self.dekningAarstall(obj.Årstall);
-                                self.dekningKartleggerFirma(obj.KartleggerFirma);
-                                self.dekningKartleggingsInstruks(obj.Kartleggingsinstruks);
-                                self.dekningOppdragsgiver(obj.Oppdragsgiver);
-                                self.dekningProgram(obj.Program);
-                                self.dekningProgramKode(obj.Programkode);
-                                self.dekningProsjektomradenavn(obj.Prosjektområdenavn);
-                                self.dekningProsjektnavn(obj.Prosjektnavn);
-                                var dekningAreal = Math.round(obj["SHAPE.STArea()"]);                                
-                                self.dekningAreal(dekningAreal.toLocaleString('no-NB') + ' m²');
-                            }
-                        }));
-                    };
-                });
-                
+                }
             };
 
             self.createQuery = function (returnGeometry, outFields, distinct, where) {
@@ -374,14 +426,25 @@
                 var query = this.createQuery(true, ["*"], false, "lower(NiNID) = '" + id + "'");
                 return naturTyperFeatureLayer.queryFeatures(query);
             };
-      
+
+            self.getNaturtypeBeskrivelse = function (id) {
+                var query = this.createQuery(false, ["*"], false, "lower(Naturtypekode) = '" + id + "'");
+                return naturtypeBeskrivelseFeatureLayer.queryFeatures(query);
+            };
+            // Henter alle og lagrer i minnet - for å slippe å kalle tjenesten en gang pr linje
+            self.getBeskivelsesVariablerMdir = function (id) {
+                //var query = this.createQuery(false, ["*"], false, "lower(MdirBVKode) = '" + id + "'");
+                var query = this.createQuery(false, ["*"], false, "1=1");
+                return beskrivelsesVariablerFeatureLayer.queryFeatures(query);
+            };
+            
             self.getRelationshipService = function (relationShipID, objectIDs) {
                 //relationshipId 0 = "kartleggingsenheter"
                 //relationshipId 1 = "beskrivelsesvariabler"
                 //relationshipId 2 = "dekningskart"                
                 var query = this.createRelationshipQuery(false, ["*"], relationShipID, objectIDs);
                 var queryTask = new QueryTask({
-                    url: urlNaturTyper
+                    url: appconfig.path.urlNaturtyper + appconfig.layerSettings.indexNaturTypeAlle
                 });
                 return queryTask.executeRelationshipQuery(query);
             };

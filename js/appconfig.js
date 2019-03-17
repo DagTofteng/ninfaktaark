@@ -12,6 +12,8 @@
         var _indexRelationshipKartleggingsenhet = 0;
         var _indexRelationshipBeskrivelsesVariabler = 1;
         var _indexRelationshipDekningskart = 2;
+        var _indexTableBeskrivelsesVariabler = 13;
+        var _indexTableNaturtypeBeskrivelse = 14;
         var _agolWebMapID = "a758ae6e84f84b3fba426d14d7cc9d4b";
         var _artsDatabankenKartlegginsenheter = "https://artsdatabanken.no/nin2.0/";
         var _artsDatabankenBeskrivelsessystem = "https://artsdatabanken.no/nin/na/bs/";
@@ -24,6 +26,8 @@
             _indexRelationshipKartleggingsenhet = 0;
             _indexRelationshipBeskrivelsesVariabler = 1;
             _indexRelationshipDekningskart = 2;
+            _indexTableBeskrivelsesVariabler = 13;
+            _indexTableNaturtypeBeskrivelse = 14;
             _agolWebMapID = "a758ae6e84f84b3fba426d14d7cc9d4b";
             _artsDatabankenKartlegginsenheter = "https://artsdatabanken.no/nin2.0/";
             _artsDatabankenBeskrivelsessystem = "https://artsdatabanken.no/nin/na/bs/";
@@ -37,6 +41,8 @@
             _indexRelationshipKartleggingsenhet = 0;
             _indexRelationshipBeskrivelsesVariabler = 1;
             _indexRelationshipDekningskart = 2;
+            _indexTableBeskrivelsesVariabler = 13;
+            _indexTableNaturtypeBeskrivelse = 14;
             _agolWebMapID = "a758ae6e84f84b3fba426d14d7cc9d4b";
             _artsDatabankenKartlegginsenheter = "https://artsdatabanken.no/nin2.0/";
             _artsDatabankenBeskrivelsessystem = "https://artsdatabanken.no/nin/na/bs/";
@@ -55,7 +61,9 @@
                 indexNaturTypeAlle: _indexNaturTypeAlle,
                 indexRelationshipKartleggingsenhet: _indexRelationshipKartleggingsenhet,
                 indexRelationshipBeskrivelsesVariabler: _indexRelationshipBeskrivelsesVariabler,
-                indexRelationshipDekningskart: _indexRelationshipDekningskart
+                indexRelationshipDekningskart: _indexRelationshipDekningskart,
+                indexTableBeskrivelsesVariabler: _indexTableBeskrivelsesVariabler,
+                indexTableNaturtypeBeskrivelse: _indexTableNaturtypeBeskrivelse
             },
 
             map: {
