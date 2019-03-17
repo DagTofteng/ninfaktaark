@@ -7,9 +7,9 @@
     tlmSiblingOfDojo: false, //Får loaderen til å lete relativt til baseUrl og ikke relativt til dojo
     
     packages: [        
-        { name: "dojo", location: "https://js.arcgis.com/4.10/dojo" },        
-        { name: "esri", location: "https://js.arcgis.com/4.10/esri" },
-        { name: "moment", location: "https://js.arcgis.com/4.10/moment" },
+        { name: "dojo", location: "https://js.arcgis.com/4.11/dojo" },        
+        { name: "esri", location: "https://js.arcgis.com/4.11/esri" },
+        { name: "moment", location: "https://js.arcgis.com/4.11/moment" },
         
 
         { name: "js", location: "js" }, //Her ligger alle våre komponenter            
