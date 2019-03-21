@@ -53,6 +53,7 @@
             self.beskrivelsesVariabelList = ko.observableArray();
             self.naturMangfoldList = ko.observableArray();
             self.kartleggingsEnheterList = ko.observableArray();
+            self.definerendeList = ko.observableArray();
             
             self.ninObjectId = ko.observable();
             self.naturType = ko.observable();
@@ -89,9 +90,13 @@
             self.naturTypeKode = ko.observable();
             self.naturTypeBeskrivelseKort = ko.observable();
             self.naturTypeBeskrivelseLang = ko.observable();
+            self.naturTypeBeskrivelseShowReadMore = ko.computed(function () {
+                return self.naturTypeBeskrivelseLang() && self.naturTypeBeskrivelseLang().length > 800;
+            });
             self.naturTypeBeskrivelseVisible = ko.observable(false);
             self.naturTypeBeskrivelseArtsDBUrl = ko.observable();
             self.naturTypeBeskrivelseNavarendeStatus2018 = ko.observable();
+            self.rodlistStatus = ko.observable();
 
             self.dekningAarstall = ko.observable();
             self.dekningKartleggerFirma = ko.observable();
@@ -168,9 +173,9 @@
                                 container: 'mapViewDiv',
                                 map: webmap,
                                 highlightOptions: {
-                                    color: [76, 230, 0, 1],
+                                    color: [75, 255, 0, 1],
                                     haloOpacity: 0.4,
-                                    fillOpacity: 0.3
+                                    fillOpacity: 0.5
                                 }
                             });
 
@@ -275,91 +280,122 @@
                                 if (res[this]) {
                                     var attrList = res[this].features.map(function (a) {
                                         return a.attributes;
-                                    });
-                                    // Alle oppføringer som IKKE har "mangfold" i TypeVariabel feltet skal i beskrivelsesvariabel tabellen
-                                    var bvList = [];
-                                    var mangfoldList = [];
+                                    });                                   
+                                   
                                     var urlArtsdbBS = appconfig.path.urlArtsDatabankenBeskrivelsesystem;
                                     var urlArtsdbLKM = appconfig.path.urlArtsDatabankenLKM;
 
-                                    array.forEach(attrList, function (item) {
-                                        item.VariabelTitle = "tetestes";
-                                        var url = [];
-                                        if (item.TypeVariabel.toLowerCase().indexOf("mangfold") == -1) {
-                                            //Hvis VariabelGruppe IKKE er MdirVariabel, link til Artsdatabanken
-                                            if (item.Variabelgruppe && item.Variabelgruppe.toLowerCase().indexOf("mdir") == -1) {
-                                                if (item.Variabelkode && item.Variabelkode.length >= 3) {
+                                    
+                                    var mangfoldList = attrList.filter(function (item) { return item.TypeVariabel.toLowerCase().indexOf("mangfold") > -1 });
+                                    var beskrivelsesVariabelList = attrList.filter(function (item) { return item.TypeVariabel.toLowerCase().indexOf("tilstand") > -1 });
+                                    var definerendeList = attrList.filter(function (item) { return item.TypeVariabel.toLowerCase().indexOf("definerende") > -1 });
 
-                                                    url[0] = item.Variabelkode.substring(0, 1);
-                                                    url[1] = item.Variabelkode.substring(1, 3);
-                                                    item.UrlArtsdatabanken = urlArtsdbBS + url[0] + "/" + url[1];
-                                                }
-                                                else {
-                                                    item.UrlArtsdatabanken = null;
-                                                }
-                                            }
-                                            // Hvis VariabelGruppe ER Mdir slår vi opp mot tjenesten
-                                            else {
-
-                                                item.UrlArtsdatabanken = "javascript:void(0)";
-                                                array.forEach(self.beskrivelsesVariabelMdirList, function (bv) {
-                                                    if (bv.MdirBVKode == item.Variabelkode.substring(0, 4)) {
-                                                        item.VariabelTitle = bv.MdirBVBeskrivelse;
-                                                    }
-                                                });
-                                                
-                                            }
-
-                                            if (item.Variabelkode.substring(0, 3).toLowerCase() == "lkm") {
-                                                url[0] = item.Variabelkode.substring(0, 3);
-                                                url[1] = item.Variabelkode.substring(3, 5);
-                                                item.UrlArtsdatabanken = urlArtsdbLKM + url[0] + "/" + url[1];
-                                            }
-
-
-                                            if (item.TypeVariabel) {
-                                                item.TypeVariabel = item.TypeVariabel.split(" ")[0];
-                                            }
-                                            bvList.push(item);
-                                        }
-                                    });
-                                    // Alle oppføringer som har "mangfold" i TypeVariabel feltet skal i naturmangfold tabellen                                
-                                    array.forEach(attrList, function (item) {
+                                    array.forEach(beskrivelsesVariabelList, function (item) {
                                         item.VariabelTitle = "";
-                                        if (item.TypeVariabel.toLowerCase().indexOf("mangfold") > -1) {
-                                            //Hvis VariabelGruppe IKKE er MdirVariabel, så skal vi linke til Artsdatabanken
-                                            if (item.Variabelgruppe && item.Variabelgruppe.toLowerCase().indexOf("mdir") == -1) {
-                                                if (item.Variabelkode && item.Variabelkode.length >= 3) {
-                                                    var url = [];
-                                                    url[0] = item.Variabelkode.substring(0, 1);
-                                                    url[1] = item.Variabelkode.substring(1, 3);
-                                                    item.UrlArtsdatabanken = urlArtsdbBS + url[0] + "/" + url[1];
-                                                }
-                                                else {
-                                                    item.UrlArtsdatabanken = null;
-                                                }
-                                            }
-                                            // Hvis VariabelGruppe ER Mdir slår vi opp mot tjenesten
-                                            else {
-                                                item.UrlArtsdatabanken = "javascript:void(0)";
-                                                array.forEach(self.beskrivelsesVariabelMdirList, function (bv) {
-                                                    if (bv.MdirBVKode == item.Variabelkode.substring(0,4)) {
-                                                        item.VariabelTitle = bv.MdirBVBeskrivelse;
-                                                    }
-                                                });
-                                            }
+                                        var url = [];                                        
+                                        //Hvis VariabelGruppe IKKE er MdirVariabel, link til Artsdatabanken
+                                        if (item.Variabelgruppe && item.Variabelgruppe.toLowerCase().indexOf("mdir") == -1) {
+                                            if (item.Variabelkode && item.Variabelkode.length >= 3) {
 
-                                            if (item.TypeVariabel) {
-                                                item.TypeVariabel = item.TypeVariabel.split(" ")[0];
+                                                url[0] = item.Variabelkode.substring(0, 1);
+                                                url[1] = item.Variabelkode.substring(1, 3);
+                                                item.UrlArtsdatabanken = urlArtsdbBS + url[0] + "/" + url[1];
                                             }
-                                            mangfoldList.push(item);
+                                            else {
+                                                item.UrlArtsdatabanken = null;
+                                            }
+                                        }
+                                        // Hvis VariabelGruppe ER Mdir slår vi opp mot tjenesten
+                                        else {
+
+                                            item.UrlArtsdatabanken = "javascript:void(0)";
+                                            array.forEach(self.beskrivelsesVariabelMdirList, function (bv) {
+                                                if (bv.MdirBVKode == item.Variabelkode.substring(0, 4)) {
+                                                    item.VariabelTitle = bv.MdirBVBeskrivelse;
+                                                }
+                                            });
+                                                
+                                        }
+
+                                        if (item.Variabelkode.substring(0, 3).toLowerCase() == "lkm") {
+                                            url[0] = item.Variabelkode.substring(0, 3);
+                                            url[1] = item.Variabelkode.substring(3, 5);
+                                            item.UrlArtsdatabanken = urlArtsdbLKM + url[0] + "/" + url[1];
+                                        }
+
+
+                                        if (item.TypeVariabel) {
+                                            item.TypeVariabel = item.TypeVariabel.split(" ")[0];
+                                        }                                       
+                                        
+                                    });
+                                    
+                                    array.forEach(mangfoldList, function (item) {
+                                        item.VariabelTitle = "";                                        
+                                        //Hvis VariabelGruppe IKKE er MdirVariabel, så skal vi linke til Artsdatabanken
+                                        if (item.Variabelgruppe && item.Variabelgruppe.toLowerCase().indexOf("mdir") == -1) {
+                                            if (item.Variabelkode && item.Variabelkode.length >= 3) {
+                                                var url = [];
+                                                url[0] = item.Variabelkode.substring(0, 1);
+                                                url[1] = item.Variabelkode.substring(1, 3);
+                                                item.UrlArtsdatabanken = urlArtsdbBS + url[0] + "/" + url[1];
+                                            }
+                                            else {
+                                                item.UrlArtsdatabanken = null;
+                                            }
+                                        }
+                                        // Hvis VariabelGruppe ER Mdir slår vi opp mot tjenesten
+                                        else {
+                                            item.UrlArtsdatabanken = "javascript:void(0)";
+                                            array.forEach(self.beskrivelsesVariabelMdirList, function (bv) {
+                                                if (bv.MdirBVKode == item.Variabelkode.substring(0,4)) {
+                                                    item.VariabelTitle = bv.MdirBVBeskrivelse;
+                                                }
+                                            });
+                                        }
+
+                                        if (item.TypeVariabel) {
+                                            item.TypeVariabel = item.TypeVariabel.split(" ")[0];
                                         }
                                     });
 
-                                    var bvListSorted = bvList.sort(function (a, b) { return a.TypeVariabel.localeCompare(b.TypeVariabel) });
+                                    array.forEach(definerendeList, function (item) {
+                                        item.VariabelTitle = "";                                        
+                                        if (item.Variabelgruppe && item.Variabelgruppe.toLowerCase().indexOf("mdir") == -1) {
+                                            if (item.Variabelkode && item.Variabelkode.length >= 3) {
+                                                var url = [];
+                                                url[0] = item.Variabelkode.substring(0, 1);
+                                                url[1] = item.Variabelkode.substring(1, 3);
+                                                item.UrlArtsdatabanken = urlArtsdbBS + url[0] + "/" + url[1];
+                                            }
+                                            else {
+                                                item.UrlArtsdatabanken = null;
+                                            }
+                                        }
+                                        // Hvis VariabelGruppe ER Mdir slår vi opp mot tjenesten
+                                        else {
+                                            item.UrlArtsdatabanken = "javascript:void(0)";
+                                            array.forEach(self.beskrivelsesVariabelMdirList, function (bv) {
+                                                if (bv.MdirBVKode == item.Variabelkode.substring(0, 4)) {
+                                                    item.VariabelTitle = bv.MdirBVBeskrivelse;
+                                                }
+                                            });
+                                        }
+
+                                        if (item.TypeVariabel) {
+                                            item.TypeVariabel = item.TypeVariabel.split(" ")[0];
+                                        }
+                                    });
+
+                                    var bvListSorted = beskrivelsesVariabelList.sort(function (a, b) { return a.TypeVariabel.localeCompare(b.TypeVariabel) });
                                     var mangfoldListSorted = mangfoldList.sort(function (a, b) { return a.TypeVariabel.localeCompare(b.TypeVariabel) });
+                                    var definerendeListSorted = definerendeList.sort(function (a, b) { return a.TypeVariabel.localeCompare(b.TypeVariabel) });
                                     self.beskrivelsesVariabelList(bvListSorted);
                                     self.naturMangfoldList(mangfoldListSorted);
+                                    self.definerendeList(definerendeListSorted);
+
+                                    
+                                    
                                 }
                             }));
 
@@ -385,8 +421,9 @@
                                 if (naturTypeRes.features.length > 0) {
                                     var feature = naturTypeRes.features[0].attributes;      
                                     self.naturTypeBeskrivelseLang(feature.NaturtypeBeskrivelse);
-                                    self.naturTypeBeskrivelseKort(feature.NaturtypeBeskrivelse.substring(0, 300));
+                                    self.naturTypeBeskrivelseKort(feature.NaturtypeBeskrivelse.substring(0, 800));
                                     self.utvalgsKriterium(feature.Utvalgskriterium);
+                                    self.rodlistStatus(feature.Rodlistestatus);
                                     if (feature.ArtsdatabankenURL) {
                                         self.naturTypeBeskrivelseArtsDBUrl(feature.ArtsdatabankenURL);
                                     }
@@ -399,9 +436,7 @@
                         };
                     });
                 }
-                else {
-
-                }
+                
             };
 
             self.createQuery = function (returnGeometry, outFields, distinct, where) {
@@ -518,6 +553,8 @@
                 $(document).on("click", "#thumbnailGallery img, #thumbnailGallery a", function () {
                     $("#modalGallery").modal("show");
                 });
+
+                $(document).tooltip({ selector: '[data-toggle="tooltip"]' });                
 
                 self.setAutoCompleteSearch();
               
